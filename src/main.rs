@@ -11,10 +11,8 @@ use crate::pgn::StyleBook;
 use std::path::PathBuf;
 
 fn main() {
-    println!("========================================");
-    println!("          Sacrifice-Engine");
-    println!("========================================");
-    println!();
+
+    println!("Sacrifice-Engine");
 
     let mut style_book = StyleBook::new();
 
