@@ -313,7 +313,7 @@ fn clean_san(token: &str) -> String {
     // Retire le numéro du coup sans supprimer les chiffres d'une notation UCI.
     let digit_count = san.chars().take_while(|ch| ch.is_ascii_digit()).count();
 
-    if digit_count > 0 {
+    if digit_count > 0 && san.as_bytes().get(digit_count) == Some(&b'.') {
         san.drain(..digit_count);
         san = san.trim_start_matches('.').to_string();
     }
@@ -388,4 +388,25 @@ fn piece_value(piece: Piece) -> i32 {
 
 pub fn move_to_uci(mv: ChessMove) -> String {
     mv.to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::clean_san;
+
+    #[test]
+    fn normalizes_zero_castling_and_move_numbers() {
+        for (input, expected) in [
+            ("0-0", "O-O"),
+            ("0-0-0", "O-O-O"),
+            ("0-0+!", "O-O+"),
+            ("8.0-0", "O-O"),
+            ("8...0-0-0", "O-O-O"),
+            ("1.e4", "e4"),
+            ("1...e5", "e5"),
+            ("e2e4", "e2e4"),
+        ] {
+            assert_eq!(clean_san(input), expected, "input: {input}");
+        }
+    }
 }
